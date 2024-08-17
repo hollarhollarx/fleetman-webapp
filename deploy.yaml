@@ -7,22 +7,17 @@ spec:
     matchLabels:
       app: webapp
   replicas: 1
-  template: # template for the pods
+  template: 
     metadata:
       labels:
         app: webapp
     spec:
       containers:
       - name: webapp
+        image: richardchesterwood/k8s-fleetman-webapp-angular:release2
         env:
         - name: SPRING_PROFILES_ACTIVE
           value: production-microservice
-        image: ${REPOSITORY_TAG}
-        imagePullPolicy: Never
-        readinessProbe:
-          httpGet:
-            path: /
-            port: 80
 ---
 apiVersion: v1
 kind: Service
@@ -30,9 +25,6 @@ metadata:
   name: fleetman-webapp
 
 spec:
-  # This defines which pods are going to be represented by this Service
-  # The service becomes a network endpoint for either other services
-  # or maybe external users to connect to (eg browser)
   selector:
     app: webapp
 
@@ -42,4 +34,3 @@ spec:
       nodePort: 30080
 
   type: NodePort
-
