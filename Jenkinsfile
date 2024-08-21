@@ -8,8 +8,6 @@ pipeline {
         AWS_ECR_REPO_NAME = credentials('ECR_REPO_WEBAPP')
         AWS_DEFAULT_REGION = 'us-east-1'
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
-        AWS_ACCESS_KEY_ID = credentials('aws-access-key-id')  
-        AWS_SECRET_ACCESS_KEY = credentials('aws-secret-access-key') 
         ORGANIZATION_NAME = "fleetman-k8s-ci"
         SERVICE_NAME = "fleetman-webapp"
         REPOSITORY_TAG = "${ORGANIZATION_NAME}-${SERVICE_NAME}:${BUILD_ID}"
@@ -75,14 +73,11 @@ pipeline {
         stage("ECR Image Pushing") {
             steps {
                 script {
-                  withEnv(["AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}", "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"]) { 
                     sh '''
-                        aws ecr get-login-password --region ${AWS_DEFAULT_REGION}
-                        docker login --username AWS --password-stdin ${REPOSITORY_URI}
+                        aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${REPOSITORY_URI}
                         docker tag ${AWS_ECR_REPO_NAME} ${REPOSITORY_URI}${AWS_ECR_REPO_NAME}:${BUILD_NUMBER}
                         docker push ${REPOSITORY_URI}${AWS_ECR_REPO_NAME}:${BUILD_NUMBER}
                     '''
-                  }
                 }
             }
         }
