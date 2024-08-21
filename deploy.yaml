@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: webapp
-        image: richardchesterwood/k8s-fleetman-webapp-angular:release2
+        image: ${REPOSITORY_TAG}
         env:
         - name: SPRING_PROFILES_ACTIVE
           value: production-microservice
