@@ -9,7 +9,7 @@ pipeline {
         AWS_DEFAULT_REGION = 'us-east-1'
         ORGANIZATION_NAME = "fleetman-k8s-ci"
         SERVICE_NAME = "fleetman-webapp"
-        REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/fleetman-webapp"
+        REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/"
         REPOSITORY_TAG = "${ORGANIZATION_NAME}-${SERVICE_NAME}:${BUILD_ID}"
     }
 
