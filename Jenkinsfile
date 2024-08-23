@@ -33,7 +33,6 @@ pipeline {
             					sh ''' $SCANNER_HOME/bin/sonar-scanner \
             					-Dsonar.projectName=fleetman-webapp \
             					-Dsonar.projectKey=fleetman-webapp '''
-            				}
                 }
             }
         }
