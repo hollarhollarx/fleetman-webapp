@@ -3,14 +3,15 @@ pipeline {
 
     environment {
         // You must set the following environment variables
-        // SCANNER_HOME = tool 'sonar-scanner'
+        SCANNER_HOME = tool 'sonar-scanner'
         AWS_ACCOUNT_ID = credentials('ACCOUNT_ID')
-        AWS_ECR_REPO_NAME = credentials('ECR_REPO_WEBAPP')
+        AWS_ECR_REPO_NAME = credentials('ECR_REPO_QUEUE')
         AWS_DEFAULT_REGION = 'us-east-1'
         ORGANIZATION_NAME = "fleetman-k8s-ci"
         SERVICE_NAME = "fleetman-webapp"
-        REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/"
+            
         REPOSITORY_TAG = "${ORGANIZATION_NAME}-${SERVICE_NAME}:${BUILD_ID}"
+        REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/"
     }
 
     stages {
@@ -29,11 +30,12 @@ pipeline {
 
         stage('Sonarqube Analysis') {
             steps {
-               withSonarQubeEnv('sonar-server') {
-            					sh ''' $SCANNER_HOME/bin/sonar-scanner \
-            					-Dsonar.projectName=fleetman-webapp \
-            					-Dsonar.projectKey=fleetman-webapp '''
-                }
+				withSonarQubeEnv('sonar-server') {
+					sh ''' $SCANNER_HOME/bin/sonar-scanner \
+					-Dsonar.projectName=fleetman-webapp \
+					-Dsonar.projectKey=fleetman-webapp '''
+				}
+                
             }
         }
 
@@ -71,11 +73,9 @@ pipeline {
         stage("ECR Image Pushing") {
             steps {
                 script {
-                    sh '''
-                        aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${REPOSITORY_URI}
-                        docker tag ${AWS_ECR_REPO_NAME} ${REPOSITORY_URI}${AWS_ECR_REPO_NAME}:${BUILD_NUMBER}
-                        docker push ${REPOSITORY_URI}${AWS_ECR_REPO_NAME}:${BUILD_NUMBER}
-                    '''
+                        sh 'aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${REPOSITORY_URI}'
+                        sh 'docker tag ${AWS_ECR_REPO_NAME} ${REPOSITORY_URI}${AWS_ECR_REPO_NAME}:${BUILD_NUMBER}'
+                        sh 'docker push ${REPOSITORY_URI}${AWS_ECR_REPO_NAME}:${BUILD_NUMBER}'
                 }
             }
         }
