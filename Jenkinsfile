@@ -98,6 +98,7 @@ pipeline {
                 GIT_ORG_NAME = "fleetman-k8s-ci"
             }
             steps {
+              dir('manifests') {
                 withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
                     sh '''
                         git config user.email "deepaktyagi048@gmail.com"
@@ -111,6 +112,7 @@ pipeline {
                         git commit -m "Update deployment Image to version \${BUILD_NUMBER}"
                         git push https://${GITHUB_TOKEN}@github.com/${GIT_ORG_NAME}/${GIT_REPO_NAME} HEAD:master
                     '''
+                  }
                 }
             }
         }
