@@ -314,4 +314,4 @@ spec:
     targetPort: ui
   selector:
     k8s-app: kibana-logging
-  type: LoadBalancer
+  type: ClusterIP
